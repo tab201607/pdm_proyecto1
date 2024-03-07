@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm Wed Mar 06 15:52:14 2024
+AVRASM ver. 2.2.8  C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm Wed Mar 06 17:08:54 2024
 
 
 EQU  SIGNATURE_000 0000001e
@@ -708,12 +708,12 @@ DEF  muxshow      r28
 DEF  debounceactive r29
 DEF  debouncetimer r30
 DEF  state        r31
-EQU  oltlength    000000fa
+EQU  timr1reset   000000eb
 EQU  timr2reset   000000c2
 CSEG MAIN         00000022
-CSEG ISR_PCINT1   000000cc
-CSEG ISR_TIMR2    000000cd
-CSEG ISR_TIMR0    000000d5
+CSEG ISR_PCINT1   000000cb
+CSEG ISR_TIMR2    000000cc
+CSEG ISR_TIMR0    000000d4
 CSEG tabla7seg    00000026
 CSEG monthlengths 0000002e
 CSEG Setup        00000034
@@ -722,13 +722,14 @@ CSEG timer2init   00000058
 CSEG Loop         00000066
 CSEG checkifhoursstate 0000006c
 CSEG Displaysecondsmode 00000070
-CSEG Displayhoursmode 00000093
-CSEG timecheck    00000094
-CSEG dsm2         0000007b
-CSEG dsm3         00000082
-CSEG dsm4         00000088
-CSEG dsm5         0000008f
-CSEG reseton10hr  000000bc
-CSEG checkifnextday 000000c3
-CSEG outerloopdecrease 000000dd
-CSEG endtimr0     000000e1
+CSEG Displayhoursmode 00000092
+CSEG dsm2         0000007a
+CSEG dsm3         00000081
+CSEG dsm4         00000087
+CSEG dsm5         0000008e
+CSEG timecheck    00000093
+CSEG timecheckend 000000ca
+CSEG reseton10hr  000000bb
+CSEG checkifnextday 000000c2
+CSEG outerloopdecrease 000000d6
+CSEG endtimr0     000000db

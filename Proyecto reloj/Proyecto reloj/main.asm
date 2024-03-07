@@ -33,7 +33,7 @@
 .def state=R31 ; estado de la maquina. Bits 0 - 1 corresponden a desplegar el tiempo, alarma y fecha. Bit 2 se activa cuando se esta cambiando el dado valor, y 4 cuando la alarma se activa
 ; utilizamos bits 5-8 para los estados de los botones
 
-.equ oltlength = 250 ; outer loop time length
+.equ timr1reset = 235 ; outer loop time length
 
 .equ timr2reset = 194
 
@@ -116,7 +116,7 @@ timer0init: ; utilizaremos el timer 0 para todo el toma de tiempo principal del 
 LDI R16, (1 << CS02) | (1 << CS00)
 OUT TCCR0B, R16 ; prescaler de 1024
 
-LDI R16, 235 ; Cargamos 235 al contador = aproximadamente 10ms
+LDI R16, timr1reset ; Cargamos 235 al contador = aproximadamente 10ms
 OUT TCNT0, R16
 
 timer2init: 
@@ -163,12 +163,10 @@ RJMP Displayhoursmode
 
 
  Displaysecondsmode:
+ 
 
-// SBRC state, 0
- //RJMP displayhoursmode
-
- SBRC state, 7
- CALL timecheck
+  MOV R17, timeseg
+ MOV R18, timemin
 
 LDI ZL, LOW(tabla7seg << 1) ; Seleccionamos el ZL para encontrar al bit bajo en el flash
 LDI ZH, HIGH(tabla7seg << 1) ; Seleccionamos el ZH para ecnontar al bit alto en el flash
@@ -278,7 +276,8 @@ RJMP Displaysecondsmode */
 ; //////////////////////////////////
 
 timecheck:
-LDI state, 0x00
+CBR state, 0x80
+
 
 ; revision segundos
 INC timeseg ; Incrementamos el contador de segundos
@@ -286,7 +285,7 @@ LDI R16, 10
 MOV R17, timeseg
 ANDI R17, 0x0F ; solo queremos ver los segundos
 CPSE R17, R16 ; revisamos que no haya superado 10
-RETI ; Si no ha superado los 10 terminamos la interrupcion
+RJMP timecheckend ; Si no ha superado los 10 terminamos la interrupcion
 
 ; revision decenas
 ANDI timeseg, 0xF0 ; colocamos a contador de segundos en 0
@@ -297,7 +296,7 @@ MOV R17, timeseg
 SWAP R17 ; colocamos decenas en los primeros 4 bits
 ANDI R17, 0x0F 
 CPSE R17, R16 ; revisamos que no haya superado 60
-RETI ; Si no ha superado los 60 terminamos la interrupcion
+RJMP timecheckend ; Si no ha superado los 60 terminamos la interrupcion
 
 ; revision minutos
 ANDI timeseg, 0x0F ; colocamos el contador de decenas de segundos en 0
@@ -306,7 +305,7 @@ LDI R16, 10
 MOV R17, timemin
 ANDI R17, 0x0F ; solo queremos ver los minutos
 CPSE R17, R16 ; revisamos que no haya superado 10
-RETI ; Si no ha superado los 10 terminamos la interrupcion
+RJMP timecheckend ; Si no ha superado los 10 terminamos la interrupcion
 
 ; revision decenas de minutos
 ANDI timemin, 0xF0 ; colocamos a contador de minutos en 0
@@ -317,7 +316,7 @@ MOV R17, timemin
 SWAP R17 ; colocamos decenas en los primeros 4 bits
 ANDI R17, 0x0F 
 CPSE R17, R16 ; revisamos que no haya superado 60
-RETI ; Si no ha superado los 60 terminamos la interrupcion
+RJMP timecheckend ; Si no ha superado los 60 terminamos la interrupcion
 
 ; revision horas
 ANDI timemin, 0x0F ; colocamos el contador de decenas de segundos en 0
@@ -334,12 +333,12 @@ RJMP checkifnextday
 reseton10hr:
 LDI R16, 10
 CPSE R17, R16 ; revisamos que no haya superado 10
-RETI ; Si no ha superado los 10 terminamos la interrupcion
+RJMP timecheckend ; Si no ha superado los 10 terminamos la interrupcion
 
 ANDI timehr, 0xF0 ; reseteamos el contador de hrs
 LDI R16, 0x10
 ADD timehr, R16 ; le sumamos 1 a las decenas
-RETI
+RJMP timecheckend
 
 checkifnextday: ; solo ejecutar si horas (no decenas) = 4
 LDI R16, 2 
@@ -351,6 +350,8 @@ RJMP reseton10hr
 
 ANDI timehr, 0x00
 INC day 
+
+timecheckend:
 RET
 
 
@@ -389,7 +390,7 @@ RETI
 
 
 ISR_TIMR2:
-LDI R16, timr2reset ; Cargamos 235 al contador = aproximadamente 10ms
+LDI R16, timr2reset ; Cargamos 0.1ms al timer2
 STS TCNT2, R16
 
 LSL muxshow
@@ -407,16 +408,11 @@ RETI
 
 ISR_TIMR0: ; Para el cambio de timer0
 
-LDI R16, 235 ; Cargamos 235 al contador = aproximadamente 10ms
+//SBRC state, 0x80
+//RJMP endtimr0
+
+LDI R16, timr1reset ; Cargamos 10ms al timer0
 OUT TCNT0, R16
-
-SBI TIFR0, 0 ; Colocamos un 0 TV0 para reiniciar el timer
-SBRS debounceactive, 0 ; revisamos si el debounce esta activo
-RJMP outerloopdecrease
-
-DEC debouncetimer ; decrementamos el debounce timer cada 10ms
-BRNE outerloopdecrease
-LDI debounceactive, 0 ; desactivamos el protocolo de debounce
 
 outerloopdecrease:
 DEC outerloop
@@ -424,7 +420,7 @@ BRNE endtimr0
 
 LDI outerloop, 100 ; le cargamos 100 al segundo loop 
 
-LDI state, 0x80
+CALL timecheck
 
 endtimr0:
 RETI
