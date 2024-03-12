@@ -24,9 +24,9 @@
  </OUTPUT_FILES>
  <LABELS>
   <MAIN><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>54</LINE></MAIN>
-  <ISR_PCINT1><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>525</LINE></ISR_PCINT1>
-  <ISR_TIMR2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>549</LINE></ISR_TIMR2>
-  <ISR_TIMR0><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>570</LINE></ISR_TIMR0>
+  <ISR_PCINT1><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>542</LINE></ISR_PCINT1>
+  <ISR_TIMR2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>575</LINE></ISR_TIMR2>
+  <ISR_TIMR0><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>596</LINE></ISR_TIMR0>
   <tabla7seg><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>63</LINE></tabla7seg>
   <monthlengths><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>67</LINE></monthlengths>
   <Setup><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>73</LINE></Setup>
@@ -35,38 +35,42 @@
   <displayLoop><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>148</LINE></displayLoop>
   <encenderluzdealarma><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>150</LINE></encenderluzdealarma>
   <aftereditcheck><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>161</LINE></aftereditcheck>
-  <displayLoop2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>173</LINE></displayLoop2>
+  <afteradvancestate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>174</LINE></afteradvancestate>
   <advancestate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>165</LINE></advancestate>
-  <checkifsecondsstate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>178</LINE></checkifsecondsstate>
-  <checkifhoursstate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>184</LINE></checkifhoursstate>
-  <Displaysecondsmode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>205</LINE></Displaysecondsmode>
-  <checkifdatestate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>190</LINE></checkifdatestate>
-  <Displayhoursmode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>226</LINE></Displayhoursmode>
-  <checkifalarmstate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>196</LINE></checkifalarmstate>
-  <Displaydatemode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>236</LINE></Displaydatemode>
-  <Displayalarmmode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>242</LINE></Displayalarmmode>
-  <alarmoff><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>214</LINE></alarmoff>
-  <Displaysecondsmode2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>218</LINE></Displaysecondsmode2>
-  <sevensegmentmux><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>254</LINE></sevensegmentmux>
-  <editTime><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>303</LINE></editTime>
-  <dsm2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>265</LINE></dsm2>
-  <dsm3><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>273</LINE></dsm3>
-  <dsm4><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>281</LINE></dsm4>
-  <dsmend><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>290</LINE></dsmend>
-  <editTimeDisplay><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>378</LINE></editTimeDisplay>
-  <editTimemins><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>337</LINE></editTimemins>
-  <editTimeHr2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>325</LINE></editTimeHr2>
-  <editTimeEnd><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>372</LINE></editTimeEnd>
-  <timecheck><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>388</LINE></timecheck>
-  <afteralarmcheck><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>406</LINE></afteralarmcheck>
-  <timecheckend><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>517</LINE></timecheckend>
-  <reseton10hr><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>453</LINE></reseton10hr>
-  <checkifnextday><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>464</LINE></checkifnextday>
-  <checkifnextmonth><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>483</LINE></checkifnextmonth>
-  <checkifnextyear><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>510</LINE></checkifnextyear>
-  <button2check><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>541</LINE></button2check>
-  <endtimr2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>561</LINE></endtimr2>
-  <endtimr0><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>587</LINE></endtimr0>
-  <outerloopdecrease><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>578</LINE></outerloopdecrease>
+  <displayLoop2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>189</LINE></displayLoop2>
+  <decreasestate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>178</LINE></decreasestate>
+  <checkifsecondsstate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>194</LINE></checkifsecondsstate>
+  <checkifhoursstate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>200</LINE></checkifhoursstate>
+  <Displaysecondsmode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>221</LINE></Displaysecondsmode>
+  <checkifdatestate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>206</LINE></checkifdatestate>
+  <Displayhoursmode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>242</LINE></Displayhoursmode>
+  <checkifalarmstate><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>212</LINE></checkifalarmstate>
+  <Displaydatemode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>252</LINE></Displaydatemode>
+  <Displayalarmmode><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>258</LINE></Displayalarmmode>
+  <Displaysecondsmode2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>234</LINE></Displaysecondsmode2>
+  <alarmoff><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>231</LINE></alarmoff>
+  <sevensegmentmux><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>270</LINE></sevensegmentmux>
+  <editTime><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>319</LINE></editTime>
+  <dsm2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>281</LINE></dsm2>
+  <dsm3><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>289</LINE></dsm3>
+  <dsm4><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>297</LINE></dsm4>
+  <dsmend><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>306</LINE></dsmend>
+  <editTimeDisplay><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>394</LINE></editTimeDisplay>
+  <editTimemins><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>353</LINE></editTimemins>
+  <editTimeHr2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>341</LINE></editTimeHr2>
+  <editTimeEnd><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>388</LINE></editTimeEnd>
+  <timecheck><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>404</LINE></timecheck>
+  <afteralarmcheck><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>423</LINE></afteralarmcheck>
+  <timecheckend><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>534</LINE></timecheckend>
+  <reseton10hr><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>470</LINE></reseton10hr>
+  <checkifnextday><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>481</LINE></checkifnextday>
+  <checkifnextmonth><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>500</LINE></checkifnextmonth>
+  <checkifnextyear><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>527</LINE></checkifnextyear>
+  <afterturningoffalarm><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>553</LINE></afterturningoffalarm>
+  <button2check><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>562</LINE></button2check>
+  <button3check><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>567</LINE></button3check>
+  <endtimr2><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>587</LINE></endtimr2>
+  <endtimr0><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>613</LINE></endtimr0>
+  <outerloopdecrease><FILE>C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm</FILE><LINE>604</LINE></outerloopdecrease>
  </LABELS>
 </ASSEMBLER_INFO>

@@ -153,22 +153,38 @@ SEI ; habilitamos interrupts
  SBRS state, 3 
  CBI PORTC, PC2 ; apagamos el luz de alarma
 
- SBRS state, 7 ; revisamos si el boton 2 se encendio
+ SBRS state, 5 ; revisamos si el boton 3 se encendio
  RJMP aftereditcheck
- CBR state, 0b1000_0000 ; apagamos el flag del boton
+ CBR state, 0b0010_0000 ; apagamos el flag del boton
  SBR state, 0b0000_0100 ; encendemos el flag de editar
 
  aftereditcheck:
- SBRS state, 6 ; revisamos si el boton cambio de estado se activo
- RJMP displayLoop2
+ SBRS state, 7 ; revisamos si el boton cambio de estado se activo
+ RJMP afteradvancestate
 
  advancestate: ; utilizamos este bloque para avanzar al siguiente estado cuando se marca el boton cambio de estado
  MOV R17, state
 ANDI R17, 0b0000_0011 ; solo queremos modificar los ultimos 2 bits - los de estado
 INC R17
 ANDI state, 0b1111_1100
+ANDI R17, 0b0000_0011
 OR state, R17
-CBR state, 0b0100_0000
+CBR state, 0b1000_0000 ; apagamos el flag del boton
+ 
+ afteradvancestate:
+ SBRS state, 6 ; revisamos si el boton de decremento de estado se activo
+ RJMP displayLoop2
+
+ decreasestate:
+ MOV R17, state
+ANDI R17, 0b0000_0011 ; solo queremos modificar los ultimos 2 bits - los de estado
+DEC R17
+ANDI state, 0b1111_1100
+ANDI R17, 0b0000_0011
+OR state, R17
+CBR state, 0b0100_0000 ; apagamos el flag del boton
+ 
+
 
 displayLoop2:
 
@@ -204,16 +220,16 @@ RJMP Displayalarmmode
 
  Displaysecondsmode: 
  
- SBRC state, 3 ; revisamos si el bit de alarma esta encendida
- RJMP alarmoff
-
- SBRC state, 2 ; revisamos la bandera de editar
- SBR state, 0b0000_1000 ; utilizamos este para encender el alarma
+ SBRS state, 2 ; revisamos si el bit de editar esta encendida
  RJMP Displaysecondsmode2
 
- alarmoff:
- SBRC state, 2 ;revisamos la bandera de editar
- CBR state, 0b0000_1000 ; si la alarma esta encendida lo apagamos
+SBRS state, 3 ; revisamos si la bandera de alarma esta encendida
+RJMP alarmoff
+CBR state, 0b0000_1000 ; si esta encendida desactivamos la alarma
+RJMP Displaysecondsmode2
+
+alarmoff:
+SBR state, 0b0000_1000 ; si esta apagado activamos la alarma
 
  Displaysecondsmode2:
  CBR state, 0b0000_0100 ; siempre desactivamos el flag de editar
@@ -301,17 +317,17 @@ RET
 
 
 editTime: ; cambiar hroas
-  CBR state, 0b1000_0000 
+  CBR state, 0b0010_0000 
 
   CALL editTimeDisplay
 
-  SBRC state, 7 ; si el boton 2 se apacha vamos al estado de cambiar minutos
+  SBRC state, 5 ; si el boton 3 se apacha vamos al estado de cambiar minutos
   RJMP editTimemins
 
-  SBRS state, 6 ; si el boton 1 se apacha incrementamos el tiempo por uno
+  SBRS state, 7 ; si el boton 2 se apacha incrementamos el tiempo por uno
   RJMP editTime
 
-  CBR state, 0b0100_0000
+  CBR state, 0b1000_0000
 
   INC timehr ; Incrementamos el contador de horas
 MOV R17, timehr
@@ -336,7 +352,7 @@ RJMP editTime
 
   editTimemins:
 
-  CBR state, 0b1000_0000
+  CBR state, 0b0010_0000
 
   CALL editTimeDisplay
 
@@ -346,7 +362,7 @@ RJMP editTime
   SBRS state, 6 ; si el boton 1 se apacha incrementamos el tiempo por uno
   RJMP editTimeMins
 
-  CBR state, 0b0100_0000
+  CBR state, 0b1000_0000
 
     INC timemin ; Incrementamos el contador de segundos
 LDI R16, 10
@@ -371,7 +387,7 @@ RJMP editTimemins
 
 editTimeEnd:
   LDI timeseg, 0x00 ; reiniciamos segundos
-  CBR state, 0b1000_0100 ; apagamos el flag de edit y el del boton
+  CBR state, 0b0010_0100 ; apagamos el flag de edit y el del boton
 
   RJMP displayLoop ; regresamos el modo display
 
@@ -401,6 +417,7 @@ CBR state, 0x80
 
  LDI R16, 0x00
  CPSE R16, R17 
+ RJMP afteralarmcheck
  SBI PORTC, PC3 ; encendemos la alarma
  
  afteralarmcheck:
@@ -528,8 +545,12 @@ ISR_PCINT1: ; Para el cambio de pines
 SBRC debouncetimer, 7 ; revisamos si el debounce es activo, en caso que si no realizamos todo lo demas
 RETI
 
+SBIS PORTC, PC3 ; vemos si la alarma esta encendida
+RJMP afterturningoffalarm
 CBI PORTC, PC3 ; apagamos la alarma cuando cualquier boton se activa
+CBR state, 0b0000_1000 ; tambien apagamos el flag de que la alarma esta encendida
 
+afterturningoffalarm:
 LDI debouncetimer, 0XFF ; le colocamos 25.5ms al debouncetimer
 
 SBIC PINC, PC0 
@@ -540,8 +561,13 @@ RETI
 
 button2check:
 SBIC PINC, PC1
-RETI
+RJMP button3check
 SBR state, 0b1000_0000 ; marcamos que se activo el segundo  boton 
+
+button3check:
+SBIC PINC, PC4
+RETI
+SBR state, 0b0010_0000 ; marcamos que se activo el tercer boton
 
 RETI
 

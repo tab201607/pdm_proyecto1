@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm Tue Mar 12 03:29:36 2024
+AVRASM ver. 2.2.8  C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm Tue Mar 12 13:13:32 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Proyecto reloj\main.asm(12): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
@@ -1077,13 +1077,13 @@ C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Pr
 000000 940c 0022                 JMP MAIN ; vector reset
                                  
                                  .org 0x0008 ; Vector de ISR: PCINT1
-000008 940c 015c                 	JMP ISR_PCINT1
+000008 940c 0167                 	JMP ISR_PCINT1
                                  
                                  	.org 0x0012
-000012 940c 0168                 	JMP ISR_TIMR2
+000012 940c 0179                 	JMP ISR_TIMR2
                                  
                                  	.org 0x0020 ; Vector de ISR: Timer 0 overflow
-000020 940c 0172                 	JMP ISR_TIMR0
+000020 940c 0183                 	JMP ISR_TIMR0
                                  
                                  
                                  MAIN:
@@ -1203,97 +1203,113 @@ C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Pr
 00006c ffd3                       SBRS state, 3 
 00006d 9842                       CBI PORTC, PC2 ; apagamos el luz de alarma
                                  
-00006e ffd7                       SBRS state, 7 ; revisamos si el boton 2 se encendio
+00006e ffd5                       SBRS state, 5 ; revisamos si el boton 3 se encendio
 00006f c002                       RJMP aftereditcheck
-000070 77df                       CBR state, 0b1000_0000 ; apagamos el flag del boton
+000070 7ddf                       CBR state, 0b0010_0000 ; apagamos el flag del boton
 000071 60d4                       SBR state, 0b0000_0100 ; encendemos el flag de editar
                                  
                                   aftereditcheck:
-000072 ffd6                       SBRS state, 6 ; revisamos si el boton cambio de estado se activo
-000073 c006                       RJMP displayLoop2
+000072 ffd7                       SBRS state, 7 ; revisamos si el boton cambio de estado se activo
+000073 c007                       RJMP afteradvancestate
                                  
                                   advancestate: ; utilizamos este bloque para avanzar al siguiente estado cuando se marca el boton cambio de estado
 000074 2f1d                       MOV R17, state
 000075 7013                      ANDI R17, 0b0000_0011 ; solo queremos modificar los ultimos 2 bits - los de estado
 000076 9513                      INC R17
 000077 7fdc                      ANDI state, 0b1111_1100
-000078 2bd1                      OR state, R17
-000079 7bdf                      CBR state, 0b0100_0000
+000078 7013                      ANDI R17, 0b0000_0011
+000079 2bd1                      OR state, R17
+00007a 77df                      CBR state, 0b1000_0000 ; apagamos el flag del boton
+                                  
+                                  afteradvancestate:
+00007b ffd6                       SBRS state, 6 ; revisamos si el boton de decremento de estado se activo
+00007c c007                       RJMP displayLoop2
+                                 
+                                  decreasestate:
+00007d 2f1d                       MOV R17, state
+00007e 7013                      ANDI R17, 0b0000_0011 ; solo queremos modificar los ultimos 2 bits - los de estado
+00007f 951a                      DEC R17
+000080 7fdc                      ANDI state, 0b1111_1100
+000081 7013                      ANDI R17, 0b0000_0011
+000082 2bd1                      OR state, R17
+000083 7bdf                      CBR state, 0b0100_0000 ; apagamos el flag del boton
+                                  
+                                 
                                  
                                  displayLoop2:
                                  
-00007a 2f1d                      MOV R17, state
-00007b 7013                      ANDI R17, 0b0000_0011
+000084 2f1d                      MOV R17, state
+000085 7013                      ANDI R17, 0b0000_0011
                                  
                                  checkifsecondsstate: ; mostrar minutos y segundos
-00007c e000                      LDI R16, 0x00
-00007d 1310                      CPSE R17, R16
-00007e c001                      RJMP checkifhoursstate
-00007f c00c                      RJMP Displaysecondsmode
+000086 e000                      LDI R16, 0x00
+000087 1310                      CPSE R17, R16
+000088 c001                      RJMP checkifhoursstate
+000089 c00c                      RJMP Displaysecondsmode
                                  
                                  checkifhoursstate: ; mostrar horas y minutos
-000080 e001                      LDI R16, 0b0000_0001
-000081 1310                      CPSE R17, R16
-000082 c001                      RJMP checkifdatestate
-000083 c015                      RJMP Displayhoursmode
+00008a e001                      LDI R16, 0b0000_0001
+00008b 1310                      CPSE R17, R16
+00008c c001                      RJMP checkifdatestate
+00008d c015                      RJMP Displayhoursmode
                                  
                                  checkifdatestate: ; mostrar fecha
-000084 e002                      LDI R16, 0b0000_0010
-000085 1310                      CPSE R17, R16
-000086 c001                      RJMP checkifalarmstate
-000087 c018                      RJMP Displaydatemode
+00008e e002                      LDI R16, 0b0000_0010
+00008f 1310                      CPSE R17, R16
+000090 c001                      RJMP checkifalarmstate
+000091 c018                      RJMP Displaydatemode
                                  
                                  checkifalarmstate: ; mostrar alarma
-000088 e003                      LDI R16, 0b0000_0011
-000089 1310                      CPSE R17, R16
-00008a cfdf                      RJMP displayLoop
-00008b c019                      RJMP Displayalarmmode
+000092 e003                      LDI R16, 0b0000_0011
+000093 1310                      CPSE R17, R16
+000094 cfd5                      RJMP displayLoop
+000095 c019                      RJMP Displayalarmmode
                                  
                                  
                                  ; Cuando estamos en modo desplegue, utilizamos el siguiente serie de bloques para mostar valores en los displays 7
                                  
                                   Displaysecondsmode: 
                                   
-00008c fdd3                       SBRC state, 3 ; revisamos si el bit de alarma esta encendida
-00008d c003                       RJMP alarmoff
+000096 ffd2                       SBRS state, 2 ; revisamos si el bit de editar esta encendida
+000097 c005                       RJMP Displaysecondsmode2
                                  
-00008e fdd2                       SBRC state, 2 ; revisamos la bandera de editar
-00008f 60d8                       SBR state, 0b0000_1000 ; utilizamos este para encender el alarma
-000090 c002                       RJMP Displaysecondsmode2
+000098 ffd3                      SBRS state, 3 ; revisamos si la bandera de alarma esta encendida
+000099 c002                      RJMP alarmoff
+00009a 7fd7                      CBR state, 0b0000_1000 ; si esta encendida desactivamos la alarma
+00009b c001                      RJMP Displaysecondsmode2
                                  
-                                  alarmoff:
-000091 fdd2                       SBRC state, 2 ;revisamos la bandera de editar
-000092 7fd7                       CBR state, 0b0000_1000 ; si la alarma esta encendida lo apagamos
+                                 alarmoff:
+00009c 60d8                      SBR state, 0b0000_1000 ; si esta apagado activamos la alarma
                                  
                                   Displaysecondsmode2:
-000093 7fdb                       CBR state, 0b0000_0100 ; siempre desactivamos el flag de editar
+00009d 7fdb                       CBR state, 0b0000_0100 ; siempre desactivamos el flag de editar
                                  
-000094 2f14                       MOV R17, timeseg
-000095 2f25                       MOV R18, timemin
-000096 940e 00aa                  CALL sevensegmentmux
-000098 cfd1                       RJMP displayLoop
+00009e 2f14                       MOV R17, timeseg
+00009f 2f25                       MOV R18, timemin
+0000a0 940e 00b4                  CALL sevensegmentmux
+0000a2 cfc7                       RJMP displayLoop
                                  
                                  Displayhoursmode:
                                  
-000099 fdd2                      SBRC state, 2 ; si el registro de editar esta encendido saltamos al bloque respectivo
-00009a c02d                      RJMP editTime 
+0000a3 fdd2                      SBRC state, 2 ; si el registro de editar esta encendido saltamos al bloque respectivo
+0000a4 c02d                      RJMP editTime 
                                  
-00009b 2f15                       MOV R17, timemin
-00009c 2f26                       MOV R18, timehr
-00009d 940e 00aa                   CALL sevensegmentmux
-00009f cfca                       RJMP displayLoop
+0000a5 2f15                       MOV R17, timemin
+0000a6 2f26                       MOV R18, timehr
+0000a7 940e 00b4                   CALL sevensegmentmux
+0000a9 cfc0                       RJMP displayLoop
                                  
                                   Displaydatemode:
-0000a0 2f19                       MOV R17, day
-0000a1 2f2a                       MOV R18, month
-0000a2 940e 00aa                  CALL sevensegmentmux
-0000a4 cfc5                       RJMP displayLoop
+0000aa 2f19                       MOV R17, day
+0000ab 2f2a                       MOV R18, month
+0000ac 940e 00b4                  CALL sevensegmentmux
+0000ae cfbb                       RJMP displayLoop
                                  
                                   Displayalarmmode:
-0000a5 2f17                       MOV R17, alarmmin
-0000a6 2f28                       MOV R18, alarmhr
-0000a7 940e 00aa                  CALL sevensegmentmux
-0000a9 cfc0                       RJMP displayLoop
+0000af 2f17                       MOV R17, alarmmin
+0000b0 2f28                       MOV R18, alarmhr
+0000b1 940e 00b4                  CALL sevensegmentmux
+0000b3 cfb6                       RJMP displayLoop
                                  
                                  
                                  
@@ -1303,47 +1319,47 @@ C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Pr
                                  
                                   sevensegmentmux: ; utilizamos este bloque para desplegar cosas en los 7 segment displays, cargamos el primer dato al R17 y el segundo a R18
                                  
-0000aa e4ec                      LDI ZL, LOW(tabla7seg << 1) ; Seleccionamos el ZL para encontrar al bit bajo en el flash
-0000ab e0f0                      LDI ZH, HIGH(tabla7seg << 1) ; Seleccionamos el ZH para ecnontar al bit alto en el flash
+0000b4 e4ec                      LDI ZL, LOW(tabla7seg << 1) ; Seleccionamos el ZL para encontrar al bit bajo en el flash
+0000b5 e0f0                      LDI ZH, HIGH(tabla7seg << 1) ; Seleccionamos el ZH para ecnontar al bit alto en el flash
                                  
-0000ac ffb0                      SBRS muxshow, 0 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos segundos
-0000ad c003                      RJMP dsm2
-0000ae e008                      LDI R16, 0x08
-0000af b905                      OUT PORTB, R16 ; encendemos el mux correcto
-0000b0 701f                      ANDI R17, 0x0F
+0000b6 ffb0                      SBRS muxshow, 0 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos segundos
+0000b7 c003                      RJMP dsm2
+0000b8 e008                      LDI R16, 0x08
+0000b9 b905                      OUT PORTB, R16 ; encendemos el mux correcto
+0000ba 701f                      ANDI R17, 0x0F
                                  
                                  dsm2: ; desplego decenas de segundos
-0000b1 ffb1                      SBRS muxshow, 1 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas
-0000b2 c004                      RJMP dsm3
-0000b3 e004                      LDI R16, 0x04
-0000b4 b905                      OUT PORTB, R16 ; encendemos el mux correcto
-0000b5 9512                      SWAP R17
-0000b6 701f                      ANDI R17, 0x0F
+0000bb ffb1                      SBRS muxshow, 1 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas
+0000bc c004                      RJMP dsm3
+0000bd e004                      LDI R16, 0x04
+0000be b905                      OUT PORTB, R16 ; encendemos el mux correcto
+0000bf 9512                      SWAP R17
+0000c0 701f                      ANDI R17, 0x0F
                                  
                                  dsm3: ; desplego minutos
-0000b7 ffb2                      SBRS muxshow, 2 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos minutos
-0000b8 c004                      RJMP dsm4
-0000b9 e002                      LDI R16, 0x02
-0000ba b905                      OUT PORTB, R16 ; encendemos el mux correcto
-0000bb 702f                      ANDI R18, 0x0F
-0000bc 2f12                      MOV R17, R18
+0000c1 ffb2                      SBRS muxshow, 2 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos minutos
+0000c2 c004                      RJMP dsm4
+0000c3 e002                      LDI R16, 0x02
+0000c4 b905                      OUT PORTB, R16 ; encendemos el mux correcto
+0000c5 702f                      ANDI R18, 0x0F
+0000c6 2f12                      MOV R17, R18
                                  
                                  dsm4: ; desplego decenas de minutos
-0000bd ffb3                      SBRS muxshow, 3 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas de minutos
-0000be c005                      RJMP dsmend
-0000bf e001                      LDI R16, 0x01
-0000c0 b905                      OUT PORTB, R16 ; encendemos el mux correcto
-0000c1 9522                      SWAP R18
-0000c2 702f                      ANDI R18, 0x0F
-0000c3 2f12                      MOV R17, R18
+0000c7 ffb3                      SBRS muxshow, 3 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas de minutos
+0000c8 c005                      RJMP dsmend
+0000c9 e001                      LDI R16, 0x01
+0000ca b905                      OUT PORTB, R16 ; encendemos el mux correcto
+0000cb 9522                      SWAP R18
+0000cc 702f                      ANDI R18, 0x0F
+0000cd 2f12                      MOV R17, R18
                                  
                                  dsmend:
                                  
-0000c4 0fe1                      ADD ZL, R17 ; Le agreagamos el valor determinado, para ir al valor especifico de la tabla
-0000c5 9104                      LPM R16, Z ; Cargamos el valor del tabla a R16
-0000c6 b90b                      OUT PORTD, R16 ; Cargar el valor a PORTD
+0000ce 0fe1                      ADD ZL, R17 ; Le agreagamos el valor determinado, para ir al valor especifico de la tabla
+0000cf 9104                      LPM R16, Z ; Cargamos el valor del tabla a R16
+0000d0 b90b                      OUT PORTD, R16 ; Cargar el valor a PORTD
                                  
-0000c7 9508                      RET
+0000d1 9508                      RET
                                  
                                  ; //////////////////////////////////////
                                  ; Subrutinas de editar
@@ -1351,221 +1367,222 @@ C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Pr
                                  
                                  
                                  editTime: ; cambiar hroas
-0000c8 77df                        CBR state, 0b1000_0000 
+0000d2 7ddf                        CBR state, 0b0010_0000 
                                  
-0000c9 940e 00fb                   CALL editTimeDisplay
+0000d3 940e 0105                   CALL editTimeDisplay
                                  
-0000cb fdd7                        SBRC state, 7 ; si el boton 2 se apacha vamos al estado de cambiar minutos
-0000cc c012                        RJMP editTimemins
+0000d5 fdd5                        SBRC state, 5 ; si el boton 3 se apacha vamos al estado de cambiar minutos
+0000d6 c012                        RJMP editTimemins
                                  
-0000cd ffd6                        SBRS state, 6 ; si el boton 1 se apacha incrementamos el tiempo por uno
-0000ce cff9                        RJMP editTime
+0000d7 ffd7                        SBRS state, 7 ; si el boton 2 se apacha incrementamos el tiempo por uno
+0000d8 cff9                        RJMP editTime
                                  
-0000cf 7bdf                        CBR state, 0b0100_0000
+0000d9 77df                        CBR state, 0b1000_0000
                                  
-0000d0 9563                        INC timehr ; Incrementamos el contador de horas
-0000d1 2f16                      MOV R17, timehr
-0000d2 e204                      LDI R16, 0x24
-0000d3 1310                      CPSE R17, R16 ; revisamos si ha llegado a 24
-0000d4 c002                      RJMP editTimeHr2
+0000da 9563                        INC timehr ; Incrementamos el contador de horas
+0000db 2f16                      MOV R17, timehr
+0000dc e204                      LDI R16, 0x24
+0000dd 1310                      CPSE R17, R16 ; revisamos si ha llegado a 24
+0000de c002                      RJMP editTimeHr2
                                  
-0000d5 e060                      LDI timehr, 0x00 ; si es igual a 24 lo reiniciamos
-0000d6 cff1                      RJMP edittime
+0000df e060                      LDI timehr, 0x00 ; si es igual a 24 lo reiniciamos
+0000e0 cff1                      RJMP edittime
                                  
                                  editTimeHr2:
-0000d7 701f                      ANDI R17, 0x0F ; solo queremos ver las horas
-0000d8 e00a                      LDI R16, 10
-0000d9 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
-0000da cfed                      RJMP editTime ; Si no ha superado los 10 terminamos la interrupcion
+0000e1 701f                      ANDI R17, 0x0F ; solo queremos ver las horas
+0000e2 e00a                      LDI R16, 10
+0000e3 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
+0000e4 cfed                      RJMP editTime ; Si no ha superado los 10 terminamos la interrupcion
                                  
-0000db 7f60                      ANDI timehr, 0xF0 ; reseteamos el contador de hrs
-0000dc e100                      LDI R16, 0x10
-0000dd 0f60                      ADD timehr, R16 ; le sumamos 1 a las decenas
-0000de cfe9                      RJMP editTime
+0000e5 7f60                      ANDI timehr, 0xF0 ; reseteamos el contador de hrs
+0000e6 e100                      LDI R16, 0x10
+0000e7 0f60                      ADD timehr, R16 ; le sumamos 1 a las decenas
+0000e8 cfe9                      RJMP editTime
                                  
                                  
                                    editTimemins:
                                  
-0000df 77df                        CBR state, 0b1000_0000
+0000e9 7ddf                        CBR state, 0b0010_0000
                                  
-0000e0 940e 00fb                   CALL editTimeDisplay
+0000ea 940e 0105                   CALL editTimeDisplay
                                  
-0000e2 fdd7                        SBRC state, 7 ; si el boton 2 se apacha terminamos
-0000e3 c014                        RJMP editTimeEnd
+0000ec fdd7                        SBRC state, 7 ; si el boton 2 se apacha terminamos
+0000ed c014                        RJMP editTimeEnd
                                  
-0000e4 ffd6                        SBRS state, 6 ; si el boton 1 se apacha incrementamos el tiempo por uno
-0000e5 cff9                        RJMP editTimeMins
+0000ee ffd6                        SBRS state, 6 ; si el boton 1 se apacha incrementamos el tiempo por uno
+0000ef cff9                        RJMP editTimeMins
                                  
-0000e6 7bdf                        CBR state, 0b0100_0000
+0000f0 77df                        CBR state, 0b1000_0000
                                  
-0000e7 9553                          INC timemin ; Incrementamos el contador de segundos
-0000e8 e00a                      LDI R16, 10
-0000e9 2f15                      MOV R17, timemin
-0000ea 701f                      ANDI R17, 0x0F ; solo queremos ver los segundos
-0000eb 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
-0000ec cff2                      RJMP editTimemins ; Si no ha superado los 10 regresamos
+0000f1 9553                          INC timemin ; Incrementamos el contador de segundos
+0000f2 e00a                      LDI R16, 10
+0000f3 2f15                      MOV R17, timemin
+0000f4 701f                      ANDI R17, 0x0F ; solo queremos ver los segundos
+0000f5 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
+0000f6 cff2                      RJMP editTimemins ; Si no ha superado los 10 regresamos
                                  
                                  ; revision decenas
-0000ed 7f50                      ANDI timemin, 0xF0 ; colocamos a contador de segundos en 0
-0000ee e100                      LDI R16, 0x10
-0000ef 0f50                      ADD timemin, R16 ; incrementamos el contador de decenas
-0000f0 e006                      LDI R16, 6 
-0000f1 2f15                      MOV R17, timemin
-0000f2 9512                      SWAP R17 ; colocamos decenas en los primeros 4 bits
-0000f3 701f                      ANDI R17, 0x0F 
-0000f4 1310                      CPSE R17, R16 ; revisamos que no haya superado 60
-0000f5 cfe9                      RJMP editTimemins ; Si no ha superado los 60 terminamos la interrupcion
-0000f6 e050                      LDI timemin, 0x00 
+0000f7 7f50                      ANDI timemin, 0xF0 ; colocamos a contador de segundos en 0
+0000f8 e100                      LDI R16, 0x10
+0000f9 0f50                      ADD timemin, R16 ; incrementamos el contador de decenas
+0000fa e006                      LDI R16, 6 
+0000fb 2f15                      MOV R17, timemin
+0000fc 9512                      SWAP R17 ; colocamos decenas en los primeros 4 bits
+0000fd 701f                      ANDI R17, 0x0F 
+0000fe 1310                      CPSE R17, R16 ; revisamos que no haya superado 60
+0000ff cfe9                      RJMP editTimemins ; Si no ha superado los 60 terminamos la interrupcion
+000100 e050                      LDI timemin, 0x00 
                                  
-0000f7 cfe7                      RJMP editTimemins
+000101 cfe7                      RJMP editTimemins
                                  
                                  editTimeEnd:
-0000f8 e040                        LDI timeseg, 0x00 ; reiniciamos segundos
-0000f9 77db                        CBR state, 0b1000_0100 ; apagamos el flag de edit y el del boton
+000102 e040                        LDI timeseg, 0x00 ; reiniciamos segundos
+000103 7ddb                        CBR state, 0b0010_0100 ; apagamos el flag de edit y el del boton
                                  
-0000fa cf6f                        RJMP displayLoop ; regresamos el modo display
+000104 cf65                        RJMP displayLoop ; regresamos el modo display
                                  
                                  editTimeDisplay:
-0000fb 2f15                      MOV R17, timemin
-0000fc 2f26                       MOV R18, timehr
-0000fd 940e 00aa                   CALL sevensegmentmux ; desplegamos el tiempo en horas y minutos en el debounce
-0000ff 9508                        RET
+000105 2f15                      MOV R17, timemin
+000106 2f26                       MOV R18, timehr
+000107 940e 00b4                   CALL sevensegmentmux ; desplegamos el tiempo en horas y minutos en el debounce
+000109 9508                        RET
                                  
                                  ; ///////////////////////////////////
                                  ; Subrutina cambio de tiempo
                                  ; //////////////////////////////////
                                  
                                  timecheck:
-000100 77df                      CBR state, 0x80
+00010a 77df                      CBR state, 0x80
                                  
                                  ; revisamos si el alarma esta activado
-000101 ffd3                       SBRS state, 3
-000102 c008                       RJMP afteralarmcheck
+00010b ffd3                       SBRS state, 3
+00010c c009                       RJMP afteralarmcheck
                                  
-000103 e010                       LDI R17, 0x00
-000104 1357                       CPSE timemin, alarmmin
-000105 9513                       INC R17
+00010d e010                       LDI R17, 0x00
+00010e 1357                       CPSE timemin, alarmmin
+00010f 9513                       INC R17
                                  
-000106 1368                       CPSE timehr, alarmhr
-000107 9513                       INC R17
+000110 1368                       CPSE timehr, alarmhr
+000111 9513                       INC R17
                                  
-000108 e000                       LDI R16, 0x00
-000109 1301                       CPSE R16, R17 
-00010a 9a43                       SBI PORTC, PC3 ; encendemos la alarma
+000112 e000                       LDI R16, 0x00
+000113 1301                       CPSE R16, R17 
+000114 c001                       RJMP afteralarmcheck
+000115 9a43                       SBI PORTC, PC3 ; encendemos la alarma
                                   
                                   afteralarmcheck:
                                  
                                  ; revision segundos
-00010b 9543                      INC timeseg ; Incrementamos el contador de segundos
-00010c e00a                      LDI R16, 10
-00010d 2f14                      MOV R17, timeseg
-00010e 701f                      ANDI R17, 0x0F ; solo queremos ver los segundos
-00010f 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
-000110 c04a                      RJMP timecheckend ; Si no ha superado los 10 terminamos la interrupcion
+000116 9543                      INC timeseg ; Incrementamos el contador de segundos
+000117 e00a                      LDI R16, 10
+000118 2f14                      MOV R17, timeseg
+000119 701f                      ANDI R17, 0x0F ; solo queremos ver los segundos
+00011a 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
+00011b c04a                      RJMP timecheckend ; Si no ha superado los 10 terminamos la interrupcion
                                  
                                  ; revision decenas
-000111 7f40                      ANDI timeseg, 0xF0 ; colocamos a contador de segundos en 0
-000112 e100                      LDI R16, 0x10
-000113 0f40                      ADD timeseg, R16 ; incrementamos el contador de decenas
-000114 e006                      LDI R16, 6 
-000115 2f14                      MOV R17, timeseg
-000116 9512                      SWAP R17 ; colocamos decenas en los primeros 4 bits
-000117 701f                      ANDI R17, 0x0F 
-000118 1310                      CPSE R17, R16 ; revisamos que no haya superado 60
-000119 c041                      RJMP timecheckend ; Si no ha superado los 60 terminamos la interrupcion
+00011c 7f40                      ANDI timeseg, 0xF0 ; colocamos a contador de segundos en 0
+00011d e100                      LDI R16, 0x10
+00011e 0f40                      ADD timeseg, R16 ; incrementamos el contador de decenas
+00011f e006                      LDI R16, 6 
+000120 2f14                      MOV R17, timeseg
+000121 9512                      SWAP R17 ; colocamos decenas en los primeros 4 bits
+000122 701f                      ANDI R17, 0x0F 
+000123 1310                      CPSE R17, R16 ; revisamos que no haya superado 60
+000124 c041                      RJMP timecheckend ; Si no ha superado los 60 terminamos la interrupcion
                                  
                                  ; revision minutos
-00011a 704f                      ANDI timeseg, 0x0F ; colocamos el contador de decenas de segundos en 0
-00011b 9553                      INC timemin ; Incrementamos el contador de segundos
-00011c e00a                      LDI R16, 10
-00011d 2f15                      MOV R17, timemin
-00011e 701f                      ANDI R17, 0x0F ; solo queremos ver los minutos
-00011f 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
-000120 c03a                      RJMP timecheckend ; Si no ha superado los 10 terminamos la interrupcion
+000125 704f                      ANDI timeseg, 0x0F ; colocamos el contador de decenas de segundos en 0
+000126 9553                      INC timemin ; Incrementamos el contador de segundos
+000127 e00a                      LDI R16, 10
+000128 2f15                      MOV R17, timemin
+000129 701f                      ANDI R17, 0x0F ; solo queremos ver los minutos
+00012a 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
+00012b c03a                      RJMP timecheckend ; Si no ha superado los 10 terminamos la interrupcion
                                  
                                  ; revision decenas de minutos
-000121 7f50                      ANDI timemin, 0xF0 ; colocamos a contador de minutos en 0
-000122 e100                      LDI R16, 0x10
-000123 0f50                      ADD timemin, R16 ; incrementamos el contador de decenas
-000124 e006                      LDI R16, 6 
-000125 2f15                      MOV R17, timemin
-000126 9512                      SWAP R17 ; colocamos decenas en los primeros 4 bits
-000127 701f                      ANDI R17, 0x0F 
-000128 1310                      CPSE R17, R16 ; revisamos que no haya superado 60
-000129 c031                      RJMP timecheckend ; Si no ha superado los 60 terminamos la interrupcion
+00012c 7f50                      ANDI timemin, 0xF0 ; colocamos a contador de minutos en 0
+00012d e100                      LDI R16, 0x10
+00012e 0f50                      ADD timemin, R16 ; incrementamos el contador de decenas
+00012f e006                      LDI R16, 6 
+000130 2f15                      MOV R17, timemin
+000131 9512                      SWAP R17 ; colocamos decenas en los primeros 4 bits
+000132 701f                      ANDI R17, 0x0F 
+000133 1310                      CPSE R17, R16 ; revisamos que no haya superado 60
+000134 c031                      RJMP timecheckend ; Si no ha superado los 60 terminamos la interrupcion
                                  
                                  ; revision horas
-00012a 705f                      ANDI timemin, 0x0F ; colocamos el contador de decenas de segundos en 0
-00012b 9563                      INC timehr ; Incrementamos el contador de segundos
-00012c 2f16                      MOV R17, timehr
-00012d 701f                      ANDI R17, 0x0F ; solo queremos ver las horas
+000135 705f                      ANDI timemin, 0x0F ; colocamos el contador de decenas de segundos en 0
+000136 9563                      INC timehr ; Incrementamos el contador de segundos
+000137 2f16                      MOV R17, timehr
+000138 701f                      ANDI R17, 0x0F ; solo queremos ver las horas
                                  
                                  reseton10hr:
-00012e e00a                      LDI R16, 10
-00012f 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
-000130 c004                      RJMP checkifnextday ; Si no ha superado los 10 terminamos la interrupcion
+000139 e00a                      LDI R16, 10
+00013a 1310                      CPSE R17, R16 ; revisamos que no haya superado 10
+00013b c004                      RJMP checkifnextday ; Si no ha superado los 10 terminamos la interrupcion
                                  
-000131 7f60                      ANDI timehr, 0xF0 ; reseteamos el contador de hrs
-000132 e100                      LDI R16, 0x10
-000133 0f60                      ADD timehr, R16 ; le sumamos 1 a las decenas
-000134 c026                      RJMP timecheckend
+00013c 7f60                      ANDI timehr, 0xF0 ; reseteamos el contador de hrs
+00013d e100                      LDI R16, 0x10
+00013e 0f60                      ADD timehr, R16 ; le sumamos 1 a las decenas
+00013f c026                      RJMP timecheckend
                                  
                                  ; revision dias
                                  checkifnextday: ; solo ejecutar si horas (no decenas) = 4
-000135 e204                      LDI R16, 0x24
-000136 2f16                      MOV R17, timehr
-000137 1310                      CPSE R17, R16 ; revisamos si los decenas on iguales a 2
-000138 c022                      RJMP timecheckend
-000139 e060                      LDI timehr, 0x00
-00013a 9593                      INC day
+000140 e204                      LDI R16, 0x24
+000141 2f16                      MOV R17, timehr
+000142 1310                      CPSE R17, R16 ; revisamos si los decenas on iguales a 2
+000143 c022                      RJMP timecheckend
+000144 e060                      LDI timehr, 0x00
+000145 9593                      INC day
                                  
                                  ; revisamos si llegamos a decenas de dias
-00013b e00a                      LDI R16, 10
-00013c 2f19                      MOV R17, day
-00013d 701f                      ANDI R17, 0x0F
-00013e 1310                      CPSE R17, R16
-00013f c003                      RJMP checkifnextmonth
+000146 e00a                      LDI R16, 10
+000147 2f19                      MOV R17, day
+000148 701f                      ANDI R17, 0x0F
+000149 1310                      CPSE R17, R16
+00014a c003                      RJMP checkifnextmonth
                                  
-000140 7f90                      ANDI day, 0xF0 ; colocamos a contador de dias en 0
-000141 e100                      LDI R16, 0x10
-000142 0f90                      ADD day, R16 ; incrementamos el contador de decenas de dias
+00014b 7f90                      ANDI day, 0xF0 ; colocamos a contador de dias en 0
+00014c e100                      LDI R16, 0x10
+00014d 0f90                      ADD day, R16 ; incrementamos el contador de decenas de dias
                                  
                                  checkifnextmonth: ; utilizamos este bloque para cargar valores de los meses y despues revisar si el dia llega a esa cantidad
-000143 e5ec                      LDI ZL, LOW(monthlengths << 1) ; Seleccionamos el ZL para encontrar al bit bajo en el flash
-000144 e0f0                      LDI ZH, HIGH(monthlengths << 1) ; Seleccionamos el ZH para ecnontar al bit alto en el flash
-000145 2f1a                      MOV R17, month
-000146 951a                      DEC R17
-000147 0fe1                      ADD ZL, R17
-000148 9104                      LPM R16, Z ; Cargamos el valor del tabla a R16
-000149 9503                      INC R16 ; le agregamos uno mas porque ahora el valor del dia es uno mas que el ultimo dia del mes
+00014e e5ec                      LDI ZL, LOW(monthlengths << 1) ; Seleccionamos el ZL para encontrar al bit bajo en el flash
+00014f e0f0                      LDI ZH, HIGH(monthlengths << 1) ; Seleccionamos el ZH para ecnontar al bit alto en el flash
+000150 2f1a                      MOV R17, month
+000151 951a                      DEC R17
+000152 0fe1                      ADD ZL, R17
+000153 9104                      LPM R16, Z ; Cargamos el valor del tabla a R16
+000154 9503                      INC R16 ; le agregamos uno mas porque ahora el valor del dia es uno mas que el ultimo dia del mes
                                  
                                  
-00014a 1309                      CPSE R16, day ; revisamos si ha llegado al maximo del dado mes
-00014b c00f                      RJMP timecheckend
+000155 1309                      CPSE R16, day ; revisamos si ha llegado al maximo del dado mes
+000156 c00f                      RJMP timecheckend
                                  
                                  ; revision meses
-00014c e091                      LDI day, 0x01
-00014d 95a3                      INC month
+000157 e091                      LDI day, 0x01
+000158 95a3                      INC month
                                  
-00014e e00a                      LDI R16, 10
-00014f 2f1a                      MOV R17, month
-000150 701f                      ANDI R17, 0x0F
-000151 1310                      CPSE R17, R16
-000152 c003                      RJMP checkifnextyear
+000159 e00a                      LDI R16, 10
+00015a 2f1a                      MOV R17, month
+00015b 701f                      ANDI R17, 0x0F
+00015c 1310                      CPSE R17, R16
+00015d c003                      RJMP checkifnextyear
                                  
-000153 7fa0                      ANDI month, 0xF0 ; colocamos a contador de dias en 0
-000154 e100                      LDI R16, 0x10
-000155 0fa0                      ADD month, R16 ; incrementamos el contador de decenas de meses
+00015e 7fa0                      ANDI month, 0xF0 ; colocamos a contador de dias en 0
+00015f e100                      LDI R16, 0x10
+000160 0fa0                      ADD month, R16 ; incrementamos el contador de decenas de meses
                                  
                                  checkifnextyear:
-000156 e103                      LDI R16, 0x13
-000157 2f1a                      MOV R17, month
-000158 1310                      CPSE R17, R16 ; revisamos si los decenas on iguales a 2
-000159 c001                      RJMP timecheckend
-00015a e0a1                      LDI month, 0x01
+000161 e103                      LDI R16, 0x13
+000162 2f1a                      MOV R17, month
+000163 1310                      CPSE R17, R16 ; revisamos si los decenas on iguales a 2
+000164 c001                      RJMP timecheckend
+000165 e0a1                      LDI month, 0x01
                                  
                                  timecheckend:
-00015b 9508                      RET
+000166 9508                      RET
                                  
                                  
                                  ; ////////////////////////////////////////////////////
@@ -1575,42 +1592,51 @@ C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Pr
                                  ISR_PCINT1: ; Para el cambio de pines
                                  
                                  ; debounce
-00015c fdc7                      SBRC debouncetimer, 7 ; revisamos si el debounce es activo, en caso que si no realizamos todo lo demas
-00015d 9518                      RETI
+000167 fdc7                      SBRC debouncetimer, 7 ; revisamos si el debounce es activo, en caso que si no realizamos todo lo demas
+000168 9518                      RETI
                                  
-00015e 9843                      CBI PORTC, PC3 ; apagamos la alarma cuando cualquier boton se activa
+000169 9b43                      SBIS PORTC, PC3 ; vemos si la alarma esta encendida
+00016a c002                      RJMP afterturningoffalarm
+00016b 9843                      CBI PORTC, PC3 ; apagamos la alarma cuando cualquier boton se activa
+00016c 7fd7                      CBR state, 0b0000_1000 ; tambien apagamos el flag de que la alarma esta encendida
                                  
-00015f efcf                      LDI debouncetimer, 0XFF ; le colocamos 25.5ms al debouncetimer
+                                 afterturningoffalarm:
+00016d efcf                      LDI debouncetimer, 0XFF ; le colocamos 25.5ms al debouncetimer
                                  
-000160 9930                      SBIC PINC, PC0 
-000161 c002                      RJMP button2check
+00016e 9930                      SBIC PINC, PC0 
+00016f c002                      RJMP button2check
                                  
-000162 64d0                      SBR state, 0b0100_0000 ; marcamos que se activo el primer boton 
-000163 9518                      RETI
+000170 64d0                      SBR state, 0b0100_0000 ; marcamos que se activo el primer boton 
+000171 9518                      RETI
                                  
                                  button2check:
-000164 9931                      SBIC PINC, PC1
-000165 9518                      RETI
-000166 68d0                      SBR state, 0b1000_0000 ; marcamos que se activo el segundo  boton 
+000172 9931                      SBIC PINC, PC1
+000173 c001                      RJMP button3check
+000174 68d0                      SBR state, 0b1000_0000 ; marcamos que se activo el segundo  boton 
                                  
-000167 9518                      RETI
+                                 button3check:
+000175 9934                      SBIC PINC, PC4
+000176 9518                      RETI
+000177 62d0                      SBR state, 0b0010_0000 ; marcamos que se activo el tercer boton
+                                 
+000178 9518                      RETI
                                  
                                  
                                  ISR_TIMR2:
-000168 e302                      LDI R16, timr2reset ; Cargamos 0.1ms al timer2
-000169 9300 00b2                 STS TCNT2, R16
+000179 e302                      LDI R16, timr2reset ; Cargamos 0.1ms al timer2
+00017a 9300 00b2                 STS TCNT2, R16
                                  
-00016b fdc7                      SBRC debouncetimer, 7 ; revisamos si el debounce esta activo
-00016c 95ca                      DEC debouncetimer ; decrementamos el debounce timer cada 10ms
+00017c fdc7                      SBRC debouncetimer, 7 ; revisamos si el debounce esta activo
+00017d 95ca                      DEC debouncetimer ; decrementamos el debounce timer cada 10ms
                                  
                                  ; Control de muxeo de los 7 segment displays
-00016d 0fbb                      LSL muxshow
-00016e fdb4                      SBRC muxshow, 4
-00016f e0b1                      LDI muxshow, 0x01
+00017e 0fbb                      LSL muxshow
+00017f fdb4                      SBRC muxshow, 4
+000180 e0b1                      LDI muxshow, 0x01
                                  
                                  endtimr2:
-000170 9ab8                      SBI TIFR2, 0 ; Colocamos un 0 TV0 para reiniciar el timer
-000171 9518                      RETI
+000181 9ab8                      SBI TIFR2, 0 ; Colocamos un 0 TV0 para reiniciar el timer
+000182 9518                      RETI
                                  
                                  
                                  
@@ -1619,23 +1645,23 @@ C:\Users\kirby\Documents\Atmel Studio\7.0\Proyecto PdM - Reloj\Proyecto reloj\Pr
                                  
                                  ISR_TIMR0: ; Para el cambio de timer0
                                  
-000172 fdd7                      SBRC state, 7
-000173 c008                      RJMP endtimr0
+000183 fdd7                      SBRC state, 7
+000184 c008                      RJMP endtimr0
                                  
-000174 ee0b                      LDI R16, timr1reset ; Cargamos 10ms al timer0
-000175 bd06                      OUT TCNT0, R16
+000185 ee0b                      LDI R16, timr1reset ; Cargamos 10ms al timer0
+000186 bd06                      OUT TCNT0, R16
                                  
                                  outerloopdecrease:
-000176 953a                      DEC outerloop
-000177 f421                      BRNE endtimr0
+000187 953a                      DEC outerloop
+000188 f421                      BRNE endtimr0
                                  
-000178 e634                      LDI outerloop, 100 ; le cargamos 100 al segundo loop 
+000189 e634                      LDI outerloop, 100 ; le cargamos 100 al segundo loop 
                                  
-000179 ffd4                      SBRS state, 0b0000_0100 ; si el flag de editar esta encendido no activamos la subrutina cambio del tiempo
-00017a 940e 0100                 CALL timecheck ; rutina cambio de tiempo
+00018a ffd4                      SBRS state, 0b0000_0100 ; si el flag de editar esta encendido no activamos la subrutina cambio del tiempo
+00018b 940e 010a                 CALL timecheck ; rutina cambio de tiempo
                                  
                                  endtimr0:
-00017c 9518                      RETI
+00018d 9518                      RETI
                                  
                                  
 
@@ -1657,37 +1683,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   2 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16: 102 r17:  68 r18:  10 r19:   2 r20:   9 
+r13:   0 r14:   0 r15:   0 r16: 102 r17:  74 r18:  10 r19:   2 r20:   9 
 r21:  17 r22:  15 r23:   3 r24:   3 r25:   8 r26:   9 r27:   8 r28:   4 
-r29:  33 r30:   4 r31:   2 
+r29:  39 r30:   4 r31:   2 
 Registers used: 17 out of 35 (48.6%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   9 adiw  :   0 and   :   0 
-andi  :  26 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
+andi  :  30 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   1 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   8 cbi   :   2 cbr   :  10 
+brvs  :   0 bset  :   0 bst   :   0 call  :   8 cbi   :   2 cbr   :  12 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   0 cpse  :  21 dec   :   3 eor   :   0 fmul  :   0 fmuls :   0 
+cpi   :   0 cpse  :  21 dec   :   4 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :  11 jmp   :   4 
 ld    :   0 ldd   :   0 ldi   :  71 lds   :   0 lpm   :   4 lsl   :   1 
-lsr   :   0 mov   :  27 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   1 ori   :   0 out   :  16 pop   :   0 
-push  :   0 rcall :   0 ret   :   3 reti  :   6 rjmp  :  47 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   3 sbic  :   2 sbis  :   0 
-sbiw  :   0 sbr   :   4 sbrc  :  11 sbrs  :  11 sec   :   0 seh   :   0 
+lsr   :   0 mov   :  28 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+neg   :   0 nop   :   0 or    :   2 ori   :   0 out   :  16 pop   :   0 
+push  :   0 rcall :   0 ret   :   3 reti  :   6 rjmp  :  52 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   3 sbic  :   3 sbis  :   1 
+sbiw  :   0 sbr   :   5 sbrc  :   8 sbrs  :  14 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :  10 
 sub   :   0 subi  :   0 swap  :   5 tst   :   0 wdr   :   0 
-Instructions used: 27 out of 113 (23.9%)
+Instructions used: 28 out of 113 (24.8%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0002fa    676     34    710   32768   2.2%
+[.cseg] 0x000000 0x00031c    710     34    744   32768   2.3%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
