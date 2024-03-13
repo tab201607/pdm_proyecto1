@@ -35,7 +35,7 @@
 
 .equ timr1reset = 235 ; outer loop time length
 
-.equ timr2reset = 50 ; muxeo debounce time length
+.equ timr2reset = 25 ; muxeo debounce time length
 
 .cseg
 .org 0x00
@@ -88,9 +88,9 @@ OUT PORTD, R16 ; Apagamos todas las salidas
 
 ; Utilizamos C para los botones, y alarma con indicador
 LDI R16, 0b0000_1100
-OUT DDRC, R16 ; Ponemos a todo C como entradas 
+OUT DDRC, R16 
 LDI R16, 0b0001_0011
-OUT PORTC, R16 ; Encendemos pullups en 2
+OUT PORTC, R16 ; Encendemos pullups en 3 botones
 
 ; Utilizamos B para mux de los displays y la alarma
 LDI R16, 0b0001_1111
@@ -250,12 +250,17 @@ RJMP editTime
  RJMP displayLoop
 
  Displaydatemode:
- MOV R17, day
- MOV R18, month
+ MOV R17, month
+ MOV R18, day
  CALL sevensegmentmux
  RJMP displayLoop
 
  Displayalarmmode:
+ SBI PORTC, 2
+
+ SBRC state, 2 ; si el registro de editar esta encendido saltamos al bloque respectivo
+RJMP editAlarm
+
  MOV R17, alarmmin
  MOV R18, alarmhr
  CALL sevensegmentmux
@@ -274,14 +279,20 @@ LDI ZH, HIGH(tabla7seg << 1) ; Seleccionamos el ZH para ecnontar al bit alto en 
 
 SBRS muxshow, 0 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos segundos
 RJMP dsm2
-LDI R16, 0x08
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x08
 OUT PORTB, R16 ; encendemos el mux correcto
 ANDI R17, 0x0F
 
 dsm2: ; desplego decenas de segundos
 SBRS muxshow, 1 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas
 RJMP dsm3
-LDI R16, 0x04
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x04
 OUT PORTB, R16 ; encendemos el mux correcto
 SWAP R17
 ANDI R17, 0x0F
@@ -289,7 +300,10 @@ ANDI R17, 0x0F
 dsm3: ; desplego minutos
 SBRS muxshow, 2 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos minutos
 RJMP dsm4
-LDI R16, 0x02
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x02
 OUT PORTB, R16 ; encendemos el mux correcto
 ANDI R18, 0x0F
 MOV R17, R18
@@ -297,7 +311,10 @@ MOV R17, R18
 dsm4: ; desplego decenas de minutos
 SBRS muxshow, 3 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas de minutos
 RJMP dsmend
-LDI R16, 0x01
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x01
 OUT PORTB, R16 ; encendemos el mux correcto
 SWAP R18
 ANDI R18, 0x0F
@@ -312,7 +329,7 @@ OUT PORTD, R16 ; Cargar el valor a PORTD
 RET
 
 ; //////////////////////////////////////
-; Subrutinas de editar
+; Subrutina de editar tiempo
 ; //////////////////////////////////////
 
 
@@ -324,8 +341,15 @@ editTime: ; cambiar hroas
   SBRC state, 5 ; si el boton 3 se apacha vamos al estado de cambiar minutos
   RJMP editTimemins
 
+  SBRC state, 6 ; si el boton 1 se apacha vamos al estado de decrementar
+  RJMP decreasehours
+
   SBRS state, 7 ; si el boton 2 se apacha incrementamos el tiempo por uno
   RJMP editTime
+
+  //////////Bloque incrementar horas///////////////
+
+  increasehours:
 
   CBR state, 0b1000_0000
 
@@ -349,6 +373,30 @@ LDI R16, 0x10
 ADD timehr, R16 ; le sumamos 1 a las decenas
 RJMP editTime
 
+  //////////Bloque decrementar horas///////////////
+
+decreasehours:
+CBR state, 0b0100_0000
+
+LDI R16, 0x00 ; revisamos si es igual a 0 
+CPSE timehr, R16
+RJMP decreasehours2
+LDI timehr, 0x23 ; le cargamos 23
+RJMP editTime
+
+decreasehours2:
+DEC timehr
+MOV R17, timehr
+ANDI R17, 0x0F
+LDI R16, 0x0F ; vamos a revisar si hubo underflow
+CPSE R16, R17
+RJMP editTime
+
+CBR timehr, 0x0F ; cambiamos el valor del bit de unidades de 15 a 9
+SBR timehr, 0x09
+RJMP editTime
+
+////////////////////////Modificacion minutos///////////////////////////////////
 
   editTimemins:
 
@@ -356,11 +404,18 @@ RJMP editTime
 
   CALL editTimeDisplay
 
-  SBRC state, 7 ; si el boton 2 se apacha terminamos
+  SBRC state, 5 ; si el boton 3 se apacha terminamos
   RJMP editTimeEnd
 
-  SBRS state, 6 ; si el boton 1 se apacha incrementamos el tiempo por uno
-  RJMP editTimeMins
+  SBRC state, 6 ; si el boton 2 se apacha 
+  RJMP decreaseMinutes
+
+  SBRS state, 7 ; si el boton 1 se apacha incrementamos el tiempo por uno
+  RJMP editTimemins
+
+  //////////Bloque incrementar minutos///////////////
+
+  increaseminutes:
 
   CBR state, 0b1000_0000
 
@@ -385,6 +440,31 @@ LDI timemin, 0x00
 
 RJMP editTimemins
 
+//////////Bloque decrementar minutos///////////////
+
+decreaseminutes:
+CBR state, 0b0100_0000
+
+LDI R16, 0x00
+CPSE timemin, R16 ; revision 0->59
+RJMP decreaseminutes2
+LDI timemin, 0x59 ; le cargamos 59
+RJMP editTimemins
+
+decreaseminutes2:
+DEC timemin
+MOV R17, timemin
+ANDI R17, 0x0F
+LDI R16, 0x0F ; vamos a revisar si hubo underflow
+CPSE R16, R17
+RJMP editTimemins
+
+CBR timemin, 0x0F ; cambiamos el valor del bit de unidades de 15 a 9
+SBR timemin, 0x09
+RJMP editTimemins
+
+
+
 editTimeEnd:
   LDI timeseg, 0x00 ; reiniciamos segundos
   CBR state, 0b0010_0100 ; apagamos el flag de edit y el del boton
@@ -396,6 +476,155 @@ MOV R17, timemin
  MOV R18, timehr
   CALL sevensegmentmux ; desplegamos el tiempo en horas y minutos en el debounce
   RET
+
+  ; //////////////////////////////////////
+; Subrutina de editar tiempo
+; //////////////////////////////////////
+
+
+editalarm: ; cambiar hroas
+  CBR state, 0b0010_0000 
+
+  CALL editalarmDisplay
+
+  SBRC state, 5 ; si el boton 3 se apacha vamos al estado de cambiar minutos
+  RJMP editalarmmins
+
+  SBRC state, 6 ; si el boton 1 se apacha vamos al estado de decrementar
+  RJMP decreasehoursa
+
+  SBRS state, 7 ; si el boton 2 se apacha incrementamos el tiempo por uno
+  RJMP editalarm
+
+  //////////Bloque incrementar horas///////////////
+
+  increasehoursa:
+
+  CBR state, 0b1000_0000
+
+  INC alarmhr ; Incrementamos el contador de horas
+MOV R17, alarmhr
+LDI R16, 0x24
+CPSE R17, R16 ; revisamos si ha llegado a 24
+RJMP editalarmHr2
+
+LDI alarmhr, 0x00 ; si es igual a 24 lo reiniciamos
+RJMP editalarm
+
+editalarmHr2:
+ANDI R17, 0x0F ; solo queremos ver las horas
+LDI R16, 10
+CPSE R17, R16 ; revisamos que no haya superado 10
+RJMP editalarm ; Si no ha superado los 10 terminamos la interrupcion
+
+ANDI alarmhr, 0xF0 ; reseteamos el contador de hrs
+LDI R16, 0x10
+ADD alarmhr, R16 ; le sumamos 1 a las decenas
+RJMP editalarm
+
+  //////////Bloque decrementar horas///////////////
+
+decreasehoursa:
+CBR state, 0b0100_0000
+
+LDI R16, 0x00 ; revisamos si es igual a 0 
+CPSE alarmhr, R16
+RJMP decreasehoursa2
+LDI alarmhr, 0x23 ; le cargamos 23
+RJMP editalarm
+
+decreasehoursa2:
+DEC alarmhr
+MOV R17, alarmhr
+ANDI R17, 0x0F
+LDI R16, 0x0F ; vamos a revisar si hubo underflow
+CPSE R16, R17
+RJMP editalarm
+
+CBR alarmhr, 0x0F ; cambiamos el valor del bit de unidades de 15 a 9
+SBR alarmhr, 0x09
+RJMP editalarm
+
+////////////////////////Modificacion minutos///////////////////////////////////
+
+  editalarmmins:
+
+  CBR state, 0b0010_0000
+
+  CALL editalarmDisplay
+
+  SBRC state, 5 ; si el boton 3 se apacha terminamos
+  RJMP editalarmEnd
+
+  SBRC state, 6 ; si el boton 2 se apacha 
+  RJMP decreaseminutesa
+
+  SBRS state, 7 ; si el boton 1 se apacha incrementamos el tiempo por uno
+  RJMP editalarmmins
+
+  //////////Bloque incrementar minutos///////////////
+
+  increaseminutesa:
+
+  CBR state, 0b1000_0000
+
+    INC alarmmin ; Incrementamos el contador de segundos
+LDI R16, 10
+MOV R17, alarmmin
+ANDI R17, 0x0F ; solo queremos ver los segundos
+CPSE R17, R16 ; revisamos que no haya superado 10
+RJMP editalarmmins ; Si no ha superado los 10 regresamos
+
+; revision decenas
+ANDI alarmmin, 0xF0 ; colocamos a contador de segundos en 0
+LDI R16, 0x10
+ADD alarmmin, R16 ; incrementamos el contador de decenas
+LDI R16, 6 
+MOV R17, alarmmin
+SWAP R17 ; colocamos decenas en los primeros 4 bits
+ANDI R17, 0x0F 
+CPSE R17, R16 ; revisamos que no haya superado 60
+RJMP editalarmmins ; Si no ha superado los 60 terminamos la interrupcion
+LDI alarmmin, 0x00 
+
+RJMP editalarmmins
+
+//////////Bloque decrementar minutos///////////////
+
+decreaseminutesa:
+CBR state, 0b0100_0000
+
+LDI R16, 0x00
+CPSE alarmmin, R16 ; revision 0->59
+RJMP decreaseminutesa2
+LDI alarmmin, 0x59 ; le cargamos 59
+RJMP editalarmmins
+
+decreaseminutesa2:
+DEC alarmmin
+MOV R17, alarmmin
+ANDI R17, 0x0F
+LDI R16, 0x0F ; vamos a revisar si hubo underflow
+CPSE R16, R17
+RJMP editalarmmins
+
+CBR alarmmin, 0x0F ; cambiamos el valor del bit de unidades de 15 a 9
+SBR alarmmin, 0x09
+RJMP editalarmmins
+
+
+
+editalarmEnd:
+  CBR state, 0b0010_0100 ; apagamos el flag de edit y el del boton
+
+  RJMP displayLoop ; regresamos el modo display
+
+editalarmDisplay:
+MOV R17, alarmmin
+ MOV R18, alarmhr
+  CALL sevensegmentmux ; desplegamos el tiempo en horas y minutos en el debounce
+  RET
+
 
 ; ///////////////////////////////////
 ; Subrutina cambio de tiempo
@@ -601,10 +830,21 @@ RJMP endtimr0
 LDI R16, timr1reset ; Cargamos 10ms al timer0
 OUT TCNT0, R16
 
+LDI R16, 50 
+CPSE outerloop, R16 ; revisamos si han pasado 500ms
+RJMP outerloopdecrease
+CBI PORTC, PC5 ; encendemos los luces de por medio
+
 outerloopdecrease:
 DEC outerloop
 BRNE endtimr0
 
+MOV outerloop, state ; por ahora podemos utilizar outerloop para otra funcion
+ANDI outerloop, 0x03 ; lo utilizamos ya que R17 o R18 podrian estar en uso
+LDI R16, 0x02 ; state de alarma
+
+CPSE outerloop, R16 ; no encendemos las luces si estamos en modo de alarma
+SBI PORTC, PC5 ; ahora que otros 500ms han pasado los apagamos
 LDI outerloop, 100 ; le cargamos 100 al segundo loop 
 
 SBRS state, 0b0000_0100 ; si el flag de editar esta encendido no activamos la subrutina cambio del tiempo
@@ -612,5 +852,3 @@ CALL timecheck ; rutina cambio de tiempo
 
 endtimr0:
 RETI
-
-
