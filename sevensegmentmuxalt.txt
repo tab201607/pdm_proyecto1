@@ -1,0 +1,57 @@
+// modulo alterno 7 mux de siete segmentos - este evite cambiar PB4-7
+
+sevensegmentmux: ; utilizamos este bloque para desplegar cosas en los 7 segment displays, cargamos el primer dato al R17 y el segundo a R18
+
+LDI ZL, LOW(tabla7seg << 1) ; Seleccionamos el ZL para encontrar al bit bajo en el flash
+LDI ZH, HIGH(tabla7seg << 1) ; Seleccionamos el ZH para ecnontar al bit alto en el flash
+
+SBRS muxshow, 0 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos segundos
+RJMP dsm2
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x08
+OUT PORTB, R16 ; encendemos el mux correcto
+ANDI R17, 0x0F
+
+dsm2: ; desplego decenas de segundos
+SBRS muxshow, 1 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas
+RJMP dsm3
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x04
+OUT PORTB, R16 ; encendemos el mux correcto
+SWAP R17
+ANDI R17, 0x0F
+
+dsm3: ; desplego minutos
+SBRS muxshow, 2 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos minutos
+RJMP dsm4
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x02
+OUT PORTB, R16 ; encendemos el mux correcto
+ANDI R18, 0x0F
+MOV R17, R18
+
+dsm4: ; desplego decenas de minutos
+SBRS muxshow, 3 ; revisamos el valor del primer bit en muxshow pare determinar si desplegamos decenas de minutos
+RJMP dsmend
+LDI R16, 0x00
+IN R16, PORTB
+CBR R16, 0x0F
+SBR R16, 0x01
+OUT PORTB, R16 ; encendemos el mux correcto
+SWAP R18
+ANDI R18, 0x0F
+MOV R17, R18
+
+dsmend:
+
+ADD ZL, R17 ; Le agreagamos el valor determinado, para ir al valor especifico de la tabla
+LPM R16, Z ; Cargamos el valor del tabla a R16
+OUT PORTD, R16 ; Cargar el valor a PORTD
+
+RET
